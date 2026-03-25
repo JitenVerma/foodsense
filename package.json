@@ -1,0 +1,19 @@
+{
+  "name": "foodsense",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n shared,api,web \"npm run dev --workspace @foodsense/shared\" \"npm run dev --workspace @foodsense/api\" \"npm run dev --workspace @foodsense/web\"",
+    "build": "npm run build --workspace @foodsense/shared && npm run build --workspace @foodsense/api && npm run build --workspace @foodsense/web",
+    "test": "npm run test --workspace @foodsense/shared && npm run test --workspace @foodsense/api && npm run test --workspace @foodsense/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^6.0.2"
+  }
+}
+

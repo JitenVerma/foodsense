@@ -1,0 +1,179 @@
+[
+  {
+    "canonicalName": "chicken breast",
+    "aliases": ["chicken", "grilled chicken", "roasted chicken"],
+    "proteinPer100g": 31,
+    "carbsPer100g": 0,
+    "fatPer100g": 3.6,
+    "caloriesPer100g": 165
+  },
+  {
+    "canonicalName": "white rice",
+    "aliases": ["rice", "steamed rice", "basmati rice"],
+    "proteinPer100g": 2.7,
+    "carbsPer100g": 28.2,
+    "fatPer100g": 0.3,
+    "caloriesPer100g": 130
+  },
+  {
+    "canonicalName": "salmon",
+    "aliases": ["grilled salmon"],
+    "proteinPer100g": 25,
+    "carbsPer100g": 0,
+    "fatPer100g": 14,
+    "caloriesPer100g": 206
+  },
+  {
+    "canonicalName": "beef",
+    "aliases": ["steak", "beef strips", "ground beef"],
+    "proteinPer100g": 26,
+    "carbsPer100g": 0,
+    "fatPer100g": 15,
+    "caloriesPer100g": 250
+  },
+  {
+    "canonicalName": "pasta",
+    "aliases": ["spaghetti", "penne", "fettuccine"],
+    "proteinPer100g": 5.8,
+    "carbsPer100g": 30.9,
+    "fatPer100g": 1.1,
+    "caloriesPer100g": 158
+  },
+  {
+    "canonicalName": "potato",
+    "aliases": ["roasted potato", "fries"],
+    "proteinPer100g": 2,
+    "carbsPer100g": 17,
+    "fatPer100g": 0.1,
+    "caloriesPer100g": 77
+  },
+  {
+    "canonicalName": "egg",
+    "aliases": ["eggs", "fried egg", "scrambled egg"],
+    "proteinPer100g": 13,
+    "carbsPer100g": 1.1,
+    "fatPer100g": 11,
+    "caloriesPer100g": 155
+  },
+  {
+    "canonicalName": "cheddar cheese",
+    "aliases": ["cheese", "parmesan", "mozzarella"],
+    "proteinPer100g": 25,
+    "carbsPer100g": 1.3,
+    "fatPer100g": 33,
+    "caloriesPer100g": 402
+  },
+  {
+    "canonicalName": "olive oil",
+    "aliases": ["oil", "cooking oil", "dressing oil"],
+    "proteinPer100g": 0,
+    "carbsPer100g": 0,
+    "fatPer100g": 100,
+    "caloriesPer100g": 884
+  },
+  {
+    "canonicalName": "butter",
+    "aliases": ["salted butter", "unsalted butter"],
+    "proteinPer100g": 0.9,
+    "carbsPer100g": 0.1,
+    "fatPer100g": 81,
+    "caloriesPer100g": 717
+  },
+  {
+    "canonicalName": "cream",
+    "aliases": ["heavy cream", "double cream"],
+    "proteinPer100g": 2.1,
+    "carbsPer100g": 3.4,
+    "fatPer100g": 34,
+    "caloriesPer100g": 340
+  },
+  {
+    "canonicalName": "lettuce",
+    "aliases": ["romaine lettuce", "mixed greens"],
+    "proteinPer100g": 1.4,
+    "carbsPer100g": 2.9,
+    "fatPer100g": 0.2,
+    "caloriesPer100g": 17
+  },
+  {
+    "canonicalName": "tomato",
+    "aliases": ["tomatoes", "cherry tomato"],
+    "proteinPer100g": 0.9,
+    "carbsPer100g": 3.9,
+    "fatPer100g": 0.2,
+    "caloriesPer100g": 18
+  },
+  {
+    "canonicalName": "cucumber",
+    "aliases": ["cucumbers"],
+    "proteinPer100g": 0.7,
+    "carbsPer100g": 3.6,
+    "fatPer100g": 0.1,
+    "caloriesPer100g": 15
+  },
+  {
+    "canonicalName": "avocado",
+    "aliases": ["avocados"],
+    "proteinPer100g": 2,
+    "carbsPer100g": 8.5,
+    "fatPer100g": 14.7,
+    "caloriesPer100g": 160
+  },
+  {
+    "canonicalName": "black beans",
+    "aliases": ["beans", "kidney beans"],
+    "proteinPer100g": 8.9,
+    "carbsPer100g": 23.7,
+    "fatPer100g": 0.5,
+    "caloriesPer100g": 132
+  },
+  {
+    "canonicalName": "corn",
+    "aliases": ["sweet corn"],
+    "proteinPer100g": 3.4,
+    "carbsPer100g": 19,
+    "fatPer100g": 1.5,
+    "caloriesPer100g": 96
+  },
+  {
+    "canonicalName": "onion",
+    "aliases": ["red onion", "brown onion"],
+    "proteinPer100g": 1.1,
+    "carbsPer100g": 9.3,
+    "fatPer100g": 0.1,
+    "caloriesPer100g": 40
+  },
+  {
+    "canonicalName": "garlic",
+    "aliases": ["garlic cloves"],
+    "proteinPer100g": 6.4,
+    "carbsPer100g": 33.1,
+    "fatPer100g": 0.5,
+    "caloriesPer100g": 149
+  },
+  {
+    "canonicalName": "tomato sauce",
+    "aliases": ["marinara", "pasta sauce", "curry sauce"],
+    "proteinPer100g": 1.7,
+    "carbsPer100g": 6.6,
+    "fatPer100g": 2.7,
+    "caloriesPer100g": 53
+  },
+  {
+    "canonicalName": "bread",
+    "aliases": ["toast", "bun", "flatbread"],
+    "proteinPer100g": 9,
+    "carbsPer100g": 49,
+    "fatPer100g": 3.2,
+    "caloriesPer100g": 265
+  },
+  {
+    "canonicalName": "yogurt",
+    "aliases": ["greek yogurt"],
+    "proteinPer100g": 10,
+    "carbsPer100g": 3.6,
+    "fatPer100g": 0.4,
+    "caloriesPer100g": 59
+  }
+]
+
