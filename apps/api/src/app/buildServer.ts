@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import Fastify, { type FastifyInstance } from "fastify";
 
 import { getEnv, type AppEnv } from "../config/env.js";
@@ -23,6 +25,7 @@ import { createImagePreprocessorService } from "../services/storage/imagePreproc
 import { createMealAnalysisOrchestratorService } from "../services/meal/mealAnalysisOrchestrator.service.js";
 import { createMealRecalculationService } from "../services/meal/mealRecalculation.service.js";
 import { AppError } from "../lib/errors.js";
+import { createLogger } from "../lib/logger.js";
 
 interface BuildServerOptions {
   envOverrides?: Partial<NodeJS.ProcessEnv>;
@@ -36,6 +39,11 @@ export async function buildServer(
 
   const server = Fastify({
     logger: env.NODE_ENV !== "test",
+    requestIdHeader: "x-request-id",
+    genReqId(request) {
+      const headerValue = request.headers["x-request-id"];
+      return (typeof headerValue === "string" && headerValue.trim()) || randomUUID();
+    },
   });
 
   await registerPlugins(server, {
@@ -52,7 +60,26 @@ export async function buildServer(
   });
 
   server.setErrorHandler((error, request, reply) => {
-    request.log.error(error);
+    const normalizedError =
+      error instanceof Error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+          }
+        : {
+            message: String(error),
+          };
+
+    createLogger(request.log).error("Request failed", {
+      event: "http.request.failed",
+      request_id: request.id,
+      method: request.method,
+      route: request.url,
+      status_code:
+        error instanceof AppError ? error.statusCode : 500,
+      error: normalizedError,
+    });
 
     if (error instanceof AppError) {
       return reply.code(error.statusCode).send({
@@ -75,6 +102,7 @@ function createServices(
   env: AppEnv,
   providedMealAnalyzer?: MealAnalyzerService,
 ) {
+  const appLogger = createLogger(server.log);
   const nutritionRepository = createNutritionRepository();
   const nutritionLookupService = createNutritionLookupService({
     repository: nutritionRepository,
@@ -110,14 +138,42 @@ function createServices(
         }));
 
   if (analyzerMode === "development-fallback") {
-    server.log.warn(
+    appLogger.warn(
       "FoodSense API started in development fallback mode because GEMINI_API_KEY was not loaded.",
+      {
+        event: "app.analysis_mode",
+        analysis_mode: analyzerMode,
+      },
     );
   } else {
-    server.log.info(
-      { model: env.GEMINI_MODEL },
-      "FoodSense API started with Gemini analysis enabled.",
-    );
+    appLogger.info("FoodSense API started with Gemini analysis enabled.", {
+      event: "app.analysis_mode",
+      analysis_mode: analyzerMode,
+      model: env.GEMINI_MODEL,
+      recipe_enrichment_enabled: Boolean(env.API_NINJAS_API_KEY),
+      usda_enabled: Boolean(env.USDA_API_KEY),
+    });
+  }
+
+  if (!env.API_NINJAS_API_KEY) {
+    appLogger.warn("API Ninjas recipe enrichment is not configured.", {
+      event: "app.integration.missing_config",
+      integration: "api_ninjas",
+    });
+  }
+
+  if (!env.USDA_API_KEY) {
+    appLogger.warn("USDA nutrition lookup is not configured; local fallback mappings will be used.", {
+      event: "app.integration.missing_config",
+      integration: "usda",
+    });
+  }
+
+  if (!env.GEMINI_API_KEY && analyzerMode !== "development-fallback") {
+    appLogger.error("Gemini analysis was requested without a GEMINI_API_KEY.", {
+      event: "app.integration.missing_config",
+      integration: "gemini",
+    });
   }
 
   const mealAnalysisOrchestrator = createMealAnalysisOrchestratorService({
@@ -132,7 +188,7 @@ function createServices(
     nutritionLookupService,
     macroCalculatorService,
     imagePreprocessorService,
-    logger: server.log,
+    logger: appLogger,
   });
 
   const mealRecalculationService = createMealRecalculationService({
