@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Sora, IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Sans, Press_Start_2P } from "next/font/google";
 
 import { AuthProvider } from "../components/providers/AuthProvider";
 import "./globals.css";
 
-const sora = Sora({
+const pressStart = Press_Start_2P({
   subsets: ["latin"],
   variable: "--font-display",
+  weight: "400",
 });
 
 const ibmPlexSans = IBM_Plex_Sans({
@@ -18,7 +19,7 @@ const ibmPlexSans = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: "FoodSense",
-  description: "Upload a meal photo and get an editable macro estimate.",
+  description: "Retro arcade nutrition tracking with editable AI meal analysis.",
 };
 
 export default function RootLayout({
@@ -29,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${sora.variable} ${ibmPlexSans.variable} bg-[linear-gradient(180deg,#f4fbf7_0%,#edf6fb_48%,#f8fafc_100%)] text-slate-950 antialiased`}
+        className={`${pressStart.variable} ${ibmPlexSans.variable} min-h-screen antialiased arcade-shell`}
       >
         <AuthProvider>{children}</AuthProvider>
       </body>

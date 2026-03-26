@@ -19,7 +19,7 @@ export function AuthRequiredState({
         action={
           <Link
             href="/login"
-            className="inline-flex rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="arcade-button-primary"
           >
             Go to login
           </Link>
