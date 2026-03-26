@@ -18,6 +18,7 @@ export interface Ingredient {
   grams: number;
   category: IngredientCategory;
   confidence: number;
+  reason?: string;
   notes?: string;
   macros?: MacroTotals;
   nutritionMatch?: string | null;
@@ -41,4 +42,3 @@ export interface RecalculateMealResponse {
   macroTotals: MacroTotals;
   warnings: string[];
 }
-

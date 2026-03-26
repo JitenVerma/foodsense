@@ -4,15 +4,13 @@ export function buildMealAnalysisPrompt() {
     "Tasks:",
     "1. Identify up to 3 likely dish candidates sorted by confidence descending.",
     "2. List only visible ingredients you can directly see.",
-    "3. List likely hidden or recipe-common ingredients separately as inferred ingredients.",
-    "4. Estimate grams for every ingredient.",
-    "5. Provide confidence values from 0 to 1.",
-    "6. Include short assumptions and warnings when uncertainty matters.",
+    "3. Estimate grams for every visible ingredient.",
+    "4. Provide confidence values from 0 to 1.",
+    "5. Include short assumptions and warnings when uncertainty matters.",
     "Rules:",
     "- No markdown fences.",
     "- No explanatory prose outside the JSON object.",
     "- Keep ingredient names concise and food-specific.",
-    "- Do not duplicate the same ingredient across visible and inferred lists unless clearly justified.",
     "- Use this JSON shape exactly:",
     JSON.stringify(
       {
@@ -28,14 +26,6 @@ export function buildMealAnalysisPrompt() {
             notes: "optional note",
           },
         ],
-        inferredIngredients: [
-          {
-            name: "ingredient name",
-            grams: 12,
-            confidence: 0.58,
-            notes: "optional note",
-          },
-        ],
         assumptions: ["short assumption"],
         warnings: ["short warning"],
       },
@@ -44,4 +34,3 @@ export function buildMealAnalysisPrompt() {
     ),
   ].join("\n");
 }
-

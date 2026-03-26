@@ -17,7 +17,7 @@ function zeroMacros() {
 }
 
 export interface MealRecalculationService {
-  recalculate(input: RecalculateMealRequest): RecalculateMealResponse;
+  recalculate(input: RecalculateMealRequest): Promise<RecalculateMealResponse>;
 }
 
 interface MealRecalculationServiceOptions {
@@ -29,29 +29,39 @@ export function createMealRecalculationService(
   options: MealRecalculationServiceOptions,
 ): MealRecalculationService {
   return {
-    recalculate(input) {
+    async recalculate(input) {
       const warnings: string[] = [];
 
-      const ingredients: Ingredient[] = input.ingredients.map((ingredient) => {
-        const nutritionMatch = options.nutritionLookupService.findIngredientNutrition(
-          ingredient.name,
-        );
+      const ingredients: Ingredient[] = await Promise.all(
+        input.ingredients.map(async (ingredient) => {
+          const nutritionMatch =
+            await options.nutritionLookupService.findIngredientNutrition(
+              ingredient.name,
+            );
 
-        if (!nutritionMatch) {
-          warnings.push(`No nutrition match found for "${ingredient.name}".`);
-        }
+          if (!nutritionMatch) {
+            warnings.push(`No nutrition match found for "${ingredient.name}".`);
+          } else if (nutritionMatch.source === "local-fallback") {
+            warnings.push(
+              `USDA lookup did not resolve "${ingredient.name}", so a local fallback nutrition mapping was used.`,
+            );
+          }
 
-        return {
-          ...ingredient,
-          nutritionMatch: nutritionMatch?.canonicalName ?? null,
-          macros: nutritionMatch
-            ? options.macroCalculatorService.calculateIngredientMacros({
-                grams: ingredient.grams,
-                nutritionPer100g: nutritionMatch,
-              })
-            : zeroMacros(),
-        };
-      });
+          return {
+            ...ingredient,
+            nutritionMatch:
+              nutritionMatch?.fdcDescription ??
+              nutritionMatch?.canonicalName ??
+              null,
+            macros: nutritionMatch
+              ? options.macroCalculatorService.calculateIngredientMacros({
+                  grams: ingredient.grams,
+                  nutritionPer100g: nutritionMatch,
+                })
+              : zeroMacros(),
+          };
+        }),
+      );
 
       return {
         ingredients,
@@ -63,4 +73,3 @@ export function createMealRecalculationService(
     },
   };
 }
-

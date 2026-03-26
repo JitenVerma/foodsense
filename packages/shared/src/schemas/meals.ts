@@ -27,6 +27,7 @@ export const IngredientSchema = z.object({
   grams: z.number().min(0),
   category: IngredientCategorySchema,
   confidence: ConfidenceSchema,
+  reason: z.string().trim().min(1).optional(),
   notes: z.string().trim().min(1).optional(),
   macros: MacroTotalsSchema.optional(),
   nutritionMatch: z.string().trim().min(1).nullable().optional(),

@@ -24,6 +24,11 @@ export function EditableIngredientRow({
           onChange={(event) => onNameChange(event.target.value)}
           className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
         />
+        {ingredient.reason ? (
+          <p className="mt-2 text-xs font-medium leading-5 text-emerald-700">
+            {ingredient.reason}
+          </p>
+        ) : null}
         {ingredient.notes ? (
           <p className="mt-2 text-xs leading-5 text-slate-500">{ingredient.notes}</p>
         ) : null}
@@ -62,4 +67,3 @@ export function EditableIngredientRow({
     </tr>
   );
 }
-

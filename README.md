@@ -23,9 +23,10 @@ packages/
 ## Features in this MVP
 
 - Meal photo upload with file validation
-- Gemini-backed meal analysis prompt with strict JSON parsing
-- Visible vs inferred ingredient separation
-- Local nutrition reference dataset for ingredient-level macros
+- Gemini 2.5 Pro image analysis with strict JSON parsing
+- Dish canonicalization and API Ninjas recipe enrichment
+- Visible vs inferred ingredient separation with inferred reasons
+- USDA-first nutrition lookup with explicit local fallback mappings
 - Editable results page with live macro updates and backend resync
 - Local browser save flow for analyzed meals
 - Shared runtime validation across frontend and backend
@@ -38,8 +39,10 @@ Key variables:
 
 - `NEXT_PUBLIC_API_BASE_URL`: frontend target for the API
 - `API_PORT`: Fastify server port
-- `GOOGLE_GENAI_API_KEY`: Gemini API key
-- `GOOGLE_GENAI_MODEL`: Gemini model id, default `gemini-2.5-flash`
+- `GEMINI_API_KEY`: Gemini API key
+- `GEMINI_MODEL`: Gemini model id, default `gemini-2.5-pro`
+- `API_NINJAS_API_KEY`: API Ninjas Recipe API key
+- `USDA_API_KEY`: USDA FoodData Central API key
 - `MAX_UPLOAD_SIZE_MB`: upload size cap
 - `ALLOW_DEV_ANALYSIS_FALLBACK`: when `true`, the API uses a clearly labeled development fallback if no Gemini API key is configured
 
@@ -112,13 +115,15 @@ Request flow for meal analysis:
 
 1. Web uploads the image to the API.
 2. API validates and preprocesses the image.
-3. Gemini returns structured JSON for dish candidates and ingredients.
-4. API validates the AI output with `zod`.
-5. Nutrition lookup maps ingredients to a local reference dataset.
-6. Macro calculation produces ingredient-level and meal-level totals.
-7. Web renders editable results and syncs recalculation requests on edits.
+3. Gemini returns structured JSON for dish candidates and visible ingredients.
+4. API canonicalizes dish candidates for recipe search.
+5. API Ninjas provides recipe ingredient evidence for likely dishes.
+6. The backend normalizes and aggregates recipe ingredients, then merges them with visible ingredients.
+7. USDA FoodData Central is used as the primary nutrition source, with explicit local fallback mappings when unresolved.
+8. Macro calculation produces ingredient-level and meal-level totals.
+9. Web renders editable results and syncs recalculation requests on edits.
 
-More detail is documented in [system_architecture.md](/c:/Users/jiten/Documents/software-projects/foodsense/system_architecture.md).
+More detail is documented in `codex markdown files/food-sense-v1-workflow.md`.
 
 ## Testing
 
@@ -127,11 +132,14 @@ Current automated coverage includes:
 - shared schema parsing tests
 - macro calculator unit tests
 - AI response normalization tests
+- ingredient aggregation tests
 - API integration test for `/api/v1/meals/analyze`
+- API integration test for `/api/v1/meals/recalculate`
 - frontend component test for live macro updates
 
 ## Notes
 
-- The nutrition provider is intentionally local and replaceable for V1.
+- USDA is the primary nutrition source and the local dataset is only an explicit fallback.
 - The API treats Gemini as an untrusted upstream and validates every response.
+- Recipe enrichment is skipped with a warning if API Ninjas is not configured.
 - When no Gemini API key is configured and fallback mode is enabled, the API returns a clearly labeled development estimate instead of pretending it performed real vision analysis.

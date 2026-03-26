@@ -32,8 +32,7 @@ export class MealsController {
 
   async recalculateMeal(request: FastifyRequest, reply: FastifyReply) {
     const parsed = RecalculateMealBodySchema.parse(request.body);
-    const result = this.options.mealRecalculationService.recalculate(parsed);
+    const result = await this.options.mealRecalculationService.recalculate(parsed);
     return reply.code(200).send(result);
   }
 }
-

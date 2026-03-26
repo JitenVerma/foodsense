@@ -12,7 +12,13 @@ import {
   createGeminiMealAnalyzerService,
   type MealAnalyzerService,
 } from "../services/ai/geminiMealAnalyzer.service.js";
+import { createIngredientAggregatorService } from "../services/recipe/ingredientAggregator.service.js";
+import { createRecipeIngredientNormalizerService } from "../services/recipe/recipeIngredientNormalizer.service.js";
+import { createRecipeSearchService } from "../services/recipe/recipeSearch.service.js";
+import { createDishCanonicalizerService } from "../services/meal/dishCanonicalizer.service.js";
 import { createIngredientInferenceService } from "../services/meal/ingredientInference.service.js";
+import { createIngredientMergerService } from "../services/meal/ingredientMerger.service.js";
+import { createPortionEstimatorService } from "../services/meal/portionEstimator.service.js";
 import { createImagePreprocessorService } from "../services/storage/imagePreprocessor.service.js";
 import { createMealAnalysisOrchestratorService } from "../services/meal/mealAnalysisOrchestrator.service.js";
 import { createMealRecalculationService } from "../services/meal/mealRecalculation.service.js";
@@ -70,13 +76,25 @@ function createServices(
   providedMealAnalyzer?: MealAnalyzerService,
 ) {
   const nutritionRepository = createNutritionRepository();
-  const nutritionLookupService = createNutritionLookupService(nutritionRepository);
+  const nutritionLookupService = createNutritionLookupService({
+    repository: nutritionRepository,
+    usdaApiKey: env.USDA_API_KEY,
+  });
   const macroCalculatorService = createMacroCalculatorService();
   const imagePreprocessorService = createImagePreprocessorService();
+  const dishCanonicalizerService = createDishCanonicalizerService();
+  const recipeSearchService = createRecipeSearchService({
+    apiKey: env.API_NINJAS_API_KEY,
+  });
+  const recipeIngredientNormalizerService =
+    createRecipeIngredientNormalizerService();
+  const ingredientAggregatorService = createIngredientAggregatorService();
   const ingredientInferenceService = createIngredientInferenceService();
+  const ingredientMergerService = createIngredientMergerService();
+  const portionEstimatorService = createPortionEstimatorService();
 
   const analyzerMode =
-    providedMealAnalyzer || env.GOOGLE_GENAI_API_KEY
+    providedMealAnalyzer || env.GEMINI_API_KEY
       ? "gemini"
       : env.ALLOW_DEV_ANALYSIS_FALLBACK
         ? "development-fallback"
@@ -87,23 +105,29 @@ function createServices(
     (analyzerMode === "development-fallback"
       ? createDevelopmentMealAnalyzerService()
       : createGeminiMealAnalyzerService({
-          apiKey: env.GOOGLE_GENAI_API_KEY,
-          model: env.GOOGLE_GENAI_MODEL,
+          apiKey: env.GEMINI_API_KEY,
+          model: env.GEMINI_MODEL,
         }));
 
   if (analyzerMode === "development-fallback") {
     server.log.warn(
-      "FoodSense API started in development fallback mode because GOOGLE_GENAI_API_KEY was not loaded.",
+      "FoodSense API started in development fallback mode because GEMINI_API_KEY was not loaded.",
     );
   } else {
     server.log.info(
-      { model: env.GOOGLE_GENAI_MODEL },
+      { model: env.GEMINI_MODEL },
       "FoodSense API started with Gemini analysis enabled.",
     );
   }
 
   const mealAnalysisOrchestrator = createMealAnalysisOrchestratorService({
     mealAnalyzer,
+    dishCanonicalizerService,
+    recipeSearchService,
+    recipeIngredientNormalizerService,
+    ingredientAggregatorService,
+    ingredientMergerService,
+    portionEstimatorService,
     ingredientInferenceService,
     nutritionLookupService,
     macroCalculatorService,

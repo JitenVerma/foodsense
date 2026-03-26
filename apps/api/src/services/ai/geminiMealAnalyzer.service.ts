@@ -55,7 +55,6 @@ export function createGeminiMealAnalyzerService(
                 required: [
                   "dishCandidates",
                   "visibleIngredients",
-                  "inferredIngredients",
                   "assumptions",
                   "warnings",
                 ],
@@ -73,19 +72,6 @@ export function createGeminiMealAnalyzerService(
                     },
                   },
                   visibleIngredients: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      required: ["name", "grams", "confidence"],
-                      properties: {
-                        name: { type: "string" },
-                        grams: { type: "number" },
-                        confidence: { type: "number" },
-                        notes: { type: "string" },
-                      },
-                    },
-                  },
-                  inferredIngredients: {
                     type: "array",
                     items: {
                       type: "object",
@@ -153,10 +139,6 @@ const devFallbackTemplates = [
       { name: "cucumber", grams: 35, confidence: 0.62 },
       { name: "tomato", grams: 40, confidence: 0.58 },
     ],
-    inferredIngredients: [
-      { name: "olive oil", grams: 10, confidence: 0.46, notes: "Likely used in cooking." },
-      { name: "garlic", grams: 6, confidence: 0.33, notes: "Common in seasoned chicken bowls." },
-    ],
     assumptions: ["Development fallback analysis was used because no Gemini API key was configured."],
     warnings: [
       "This estimate did not use live Gemini vision analysis.",
@@ -175,10 +157,6 @@ const devFallbackTemplates = [
       { name: "tomato", grams: 45, confidence: 0.63 },
       { name: "avocado", grams: 50, confidence: 0.49 },
     ],
-    inferredIngredients: [
-      { name: "olive oil", grams: 12, confidence: 0.51, notes: "Likely dressing component." },
-      { name: "onion", grams: 18, confidence: 0.34, notes: "Frequently present in salad mixes." },
-    ],
     assumptions: ["Development fallback analysis was used because no Gemini API key was configured."],
     warnings: [
       "This estimate did not use live Gemini vision analysis.",
@@ -195,10 +173,6 @@ const devFallbackTemplates = [
       { name: "pasta", grams: 220, confidence: 0.82 },
       { name: "cheddar cheese", grams: 28, confidence: 0.44 },
       { name: "tomato sauce", grams: 95, confidence: 0.53 },
-    ],
-    inferredIngredients: [
-      { name: "cream", grams: 30, confidence: 0.49, notes: "Creamy pasta sauces often include cream." },
-      { name: "butter", grams: 10, confidence: 0.39, notes: "Common finishing fat in pasta dishes." },
     ],
     assumptions: ["Development fallback analysis was used because no Gemini API key was configured."],
     warnings: [
