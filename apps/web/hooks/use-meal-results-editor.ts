@@ -125,7 +125,7 @@ export function useMealResultsEditor(initialAnalysis: MealAnalysisResponse) {
     ingredients,
     visibleIngredients: ingredients.filter((ingredient) => ingredient.category === "visible"),
     inferredIngredients: ingredients.filter(
-      (ingredient) => ingredient.category === "inferred",
+      (ingredient) => ingredient.category !== "visible",
     ),
     macroTotals,
     warnings,

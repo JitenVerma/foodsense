@@ -13,6 +13,12 @@ const EnvSchema = z.object({
   GOOGLE_GENAI_MODEL: z.string().trim().optional(),
   API_NINJAS_API_KEY: z.string().trim().optional(),
   USDA_API_KEY: z.string().trim().optional(),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().trim().url().optional(),
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().trim().optional(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().trim().optional(),
+  SUPABASE_URL: z.string().trim().url().optional(),
+  SUPABASE_PUBLISHABLE_DEFAULT_KEY: z.string().trim().optional(),
+  SUPABASE_ANON_KEY: z.string().trim().optional(),
   MAX_UPLOAD_SIZE_MB: z.coerce
     .number()
     .int()
@@ -28,6 +34,8 @@ export interface AppEnv {
   GEMINI_MODEL: string;
   API_NINJAS_API_KEY?: string;
   USDA_API_KEY?: string;
+  SUPABASE_URL?: string;
+  SUPABASE_PUBLISHABLE_KEY?: string;
   MAX_UPLOAD_SIZE_MB: number;
   ALLOW_DEV_ANALYSIS_FALLBACK: boolean;
   maxUploadSizeBytes: number;
@@ -52,6 +60,12 @@ export function getEnv(overrides?: Partial<NodeJS.ProcessEnv>): AppEnv {
     GEMINI_MODEL: parsed.GEMINI_MODEL ?? parsed.GOOGLE_GENAI_MODEL ?? "gemini-2.5-pro",
     API_NINJAS_API_KEY: parsed.API_NINJAS_API_KEY,
     USDA_API_KEY: parsed.USDA_API_KEY,
+    SUPABASE_URL: parsed.SUPABASE_URL ?? parsed.NEXT_PUBLIC_SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY:
+      parsed.SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
+      parsed.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY ??
+      parsed.SUPABASE_ANON_KEY ??
+      parsed.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     MAX_UPLOAD_SIZE_MB: parsed.MAX_UPLOAD_SIZE_MB,
     ALLOW_DEV_ANALYSIS_FALLBACK: parsed.ALLOW_DEV_ANALYSIS_FALLBACK,
     maxUploadSizeBytes: parsed.MAX_UPLOAD_SIZE_MB * 1024 * 1024,

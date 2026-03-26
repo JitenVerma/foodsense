@@ -39,3 +39,14 @@ export class ConfigurationError extends AppError {
   }
 }
 
+export class UnauthorizedError extends AppError {
+  constructor(message = "Authentication is required for this request.") {
+    super(message, 401, "UNAUTHORIZED");
+  }
+}
+
+export class NotFoundError extends AppError {
+  constructor(message: string) {
+    super(message, 404, "NOT_FOUND");
+  }
+}

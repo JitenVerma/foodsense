@@ -10,6 +10,8 @@ export async function registerPlugins(
 ) {
   await server.register(cors, {
     origin: true,
+    methods: ["GET", "HEAD", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "x-request-id"],
   });
 
   await server.register(multipart, {

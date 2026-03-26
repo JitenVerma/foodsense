@@ -11,13 +11,16 @@ export const MacroTotalsSchema = z.object({
     fat_g: z.number().min(0),
     calories_kcal: z.number().min(0),
 });
-export const IngredientCategorySchema = z.enum(["visible", "inferred"]);
+export const IngredientCategorySchema = z.enum(["visible", "inferred", "manual"]);
+export const MealTypeSchema = z.enum(["breakfast", "lunch", "dinner", "snack"]);
+export const IsoDateTimeSchema = z.string().datetime({ offset: true });
 export const IngredientSchema = z.object({
     id: z.string().trim().min(1),
     name: z.string().trim().min(1),
     grams: z.number().min(0),
     category: IngredientCategorySchema,
     confidence: ConfidenceSchema,
+    reason: z.string().trim().min(1).optional(),
     notes: z.string().trim().min(1).optional(),
     macros: MacroTotalsSchema.optional(),
     nutritionMatch: z.string().trim().min(1).nullable().optional(),
@@ -37,6 +40,52 @@ export const RecalculateMealResponseSchema = z.object({
     ingredients: z.array(IngredientSchema),
     macroTotals: MacroTotalsSchema,
     warnings: z.array(z.string().trim().min(1)),
+});
+export const SaveMealRequestSchema = z.object({
+    title: z.string().trim().min(1),
+    mealType: MealTypeSchema,
+    eatenAt: IsoDateTimeSchema,
+    imageUrl: z.string().trim().min(1).nullable().optional(),
+    ingredients: z.array(IngredientSchema).min(1),
+    assumptions: z.array(z.string().trim().min(1)),
+    warnings: z.array(z.string().trim().min(1)),
+});
+export const UpdateMealRequestSchema = z.object({
+    title: z.string().trim().min(1).optional(),
+    mealType: MealTypeSchema.optional(),
+    eatenAt: IsoDateTimeSchema.optional(),
+    imageUrl: z.string().trim().min(1).nullable().optional(),
+    ingredients: z.array(IngredientSchema).min(1).optional(),
+    assumptions: z.array(z.string().trim().min(1)).optional(),
+    warnings: z.array(z.string().trim().min(1)).optional(),
+});
+export const SavedMealSchema = z.object({
+    id: z.string().trim().min(1),
+    userId: z.string().trim().min(1),
+    title: z.string().trim().min(1),
+    mealType: MealTypeSchema,
+    eatenAt: IsoDateTimeSchema,
+    imageUrl: z.string().trim().min(1).nullable(),
+    ingredients: z.array(IngredientSchema),
+    macroTotals: MacroTotalsSchema,
+    assumptions: z.array(z.string().trim().min(1)),
+    warnings: z.array(z.string().trim().min(1)),
+    createdAt: IsoDateTimeSchema,
+    updatedAt: IsoDateTimeSchema,
+});
+export const DailyMealSummarySchema = z.object({
+    date: z.string().date(),
+    mealCount: z.number().int().min(0),
+    macroTotals: MacroTotalsSchema,
+});
+export const CalendarMonthResponseSchema = z.object({
+    month: z.string().regex(/^\d{4}-\d{2}$/),
+    days: z.array(DailyMealSummarySchema),
+});
+export const MealsByDateResponseSchema = z.object({
+    date: z.string().date(),
+    meals: z.array(SavedMealSchema),
+    macroTotals: MacroTotalsSchema,
 });
 export const AnalyzeMealBase64RequestSchema = z.object({
     imageBase64: z.string().trim().min(1),

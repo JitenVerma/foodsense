@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Sora, IBM_Plex_Sans } from "next/font/google";
 
+import { AuthProvider } from "../components/providers/AuthProvider";
 import "./globals.css";
 
 const sora = Sora({
@@ -30,7 +31,7 @@ export default function RootLayout({
       <body
         className={`${sora.variable} ${ibmPlexSans.variable} bg-[linear-gradient(180deg,#f4fbf7_0%,#edf6fb_48%,#f8fafc_100%)] text-slate-950 antialiased`}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

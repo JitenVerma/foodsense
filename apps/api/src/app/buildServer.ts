@@ -6,6 +6,7 @@ import { getEnv, type AppEnv } from "../config/env.js";
 import { registerPlugins } from "./plugins.js";
 import { registerHealthRoutes } from "../routes/health.routes.js";
 import { registerMealRoutes } from "../routes/meals.routes.js";
+import { createMealsRepository } from "../repositories/meals.repository.js";
 import { createNutritionRepository } from "../repositories/nutrition.repository.js";
 import { createNutritionLookupService } from "../services/nutrition/nutritionLookup.service.js";
 import { createMacroCalculatorService } from "../services/nutrition/macroCalculator.service.js";
@@ -24,6 +25,8 @@ import { createPortionEstimatorService } from "../services/meal/portionEstimator
 import { createImagePreprocessorService } from "../services/storage/imagePreprocessor.service.js";
 import { createMealAnalysisOrchestratorService } from "../services/meal/mealAnalysisOrchestrator.service.js";
 import { createMealRecalculationService } from "../services/meal/mealRecalculation.service.js";
+import { createMealPersistenceService } from "../services/meal/mealPersistence.service.js";
+import { createRequestAuthService } from "../services/auth/requestAuth.service.js";
 import { AppError } from "../lib/errors.js";
 import { createLogger } from "../lib/logger.js";
 
@@ -56,6 +59,8 @@ export async function buildServer(
   await registerMealRoutes(server, {
     mealAnalysisOrchestrator: services.mealAnalysisOrchestrator,
     mealRecalculationService: services.mealRecalculationService,
+    mealPersistenceService: services.mealPersistenceService,
+    requestAuthService: services.requestAuthService,
     maxUploadSizeBytes: env.maxUploadSizeBytes,
   });
 
@@ -104,11 +109,16 @@ function createServices(
 ) {
   const appLogger = createLogger(server.log);
   const nutritionRepository = createNutritionRepository();
+  const mealsRepository = createMealsRepository();
   const nutritionLookupService = createNutritionLookupService({
     repository: nutritionRepository,
     usdaApiKey: env.USDA_API_KEY,
   });
   const macroCalculatorService = createMacroCalculatorService();
+  const requestAuthService = createRequestAuthService({
+    supabaseUrl: env.SUPABASE_URL,
+    supabasePublishableKey: env.SUPABASE_PUBLISHABLE_KEY,
+  });
   const imagePreprocessorService = createImagePreprocessorService();
   const dishCanonicalizerService = createDishCanonicalizerService();
   const recipeSearchService = createRecipeSearchService({
@@ -195,10 +205,29 @@ function createServices(
     nutritionLookupService,
     macroCalculatorService,
   });
+  const mealPersistenceService = createMealPersistenceService({
+    mealsRepository,
+    requestAuthService,
+    macroCalculatorService,
+  });
+
+  if (!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY) {
+    appLogger.warn("Supabase persistence is not configured.", {
+      event: "app.integration.missing_config",
+      integration: "supabase",
+    });
+  } else {
+    appLogger.info("Supabase persistence is enabled.", {
+      event: "app.integration.ready",
+      integration: "supabase",
+    });
+  }
 
   return {
     mealAnalysisOrchestrator,
     mealRecalculationService,
+    mealPersistenceService,
+    requestAuthService,
     analyzerMode,
   };
 }

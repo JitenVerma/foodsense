@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { MealAnalysisResponseSchema } from "./meals.js";
+import { MealAnalysisResponseSchema, SavedMealSchema } from "./meals.js";
 
 describe("MealAnalysisResponseSchema", () => {
   it("parses a valid normalized meal analysis payload", () => {
@@ -51,5 +51,29 @@ describe("MealAnalysisResponseSchema", () => {
         warnings: [],
       }),
     ).toThrowError(/too_big/i);
+  });
+
+  it("accepts Supabase timestamp offsets in saved meals", () => {
+    const result = SavedMealSchema.parse({
+      id: "meal_123",
+      userId: "user_123",
+      title: "Chicken bowl",
+      mealType: "lunch",
+      eatenAt: "2026-03-26T12:30:00+00:00",
+      imageUrl: null,
+      ingredients: [],
+      macroTotals: {
+        protein_g: 40,
+        carbs_g: 55,
+        fat_g: 12,
+        calories_kcal: 480,
+      },
+      assumptions: [],
+      warnings: [],
+      createdAt: "2026-03-26T12:31:00+00:00",
+      updatedAt: "2026-03-26T12:31:00+00:00",
+    });
+
+    expect(result.eatenAt).toBe("2026-03-26T12:30:00+00:00");
   });
 });

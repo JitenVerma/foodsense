@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import {
+  SaveMealRequestSchema,
+  UpdateMealRequestSchema,
   DishCandidateSchema,
   RecalculateMealRequestSchema,
 } from "@foodsense/shared";
@@ -20,5 +22,15 @@ export const MealAnalysisAiResponseSchema = z.object({
 });
 
 export const RecalculateMealBodySchema = RecalculateMealRequestSchema;
+export const SaveMealBodySchema = SaveMealRequestSchema;
+export const UpdateMealBodySchema = UpdateMealRequestSchema;
+export const CalendarMonthQuerySchema = z.object({
+  month: z.string().regex(/^\d{4}-\d{2}$/),
+  timeZone: z.string().trim().min(1).optional(),
+});
+export const MealsByDateQuerySchema = z.object({
+  date: z.string().date(),
+  timeZone: z.string().trim().min(1).optional(),
+});
 
 export type MealAnalysisAiResponse = z.infer<typeof MealAnalysisAiResponseSchema>;
