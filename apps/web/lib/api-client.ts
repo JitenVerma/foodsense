@@ -1,4 +1,15 @@
 import {
+  DailyProgressSummarySchema,
+  ProgressRangeSchema,
+  QuestProgressSchema,
+  StreakSummarySchema,
+  TodayProgressSchema,
+  UpdateGoalsRequestSchema,
+  UpdateProfileRequestSchema,
+  UserGoalsSchema,
+  UserProfileSchema,
+  WeekProgressSchema,
+  XpSummarySchema,
   CalendarMonthResponseSchema,
   MealsByDateResponseSchema,
   MealAnalysisResponseSchema,
@@ -11,10 +22,20 @@ import {
   type Ingredient,
   type MealsByDateResponse,
   type MealAnalysisResponse,
+  type ProgressRange,
+  type QuestProgress,
   type SaveMealRequest,
   type SavedMeal,
+  type StreakSummary,
+  type TodayProgress,
   type UpdateMealRequest,
+  type UpdateGoalsRequest,
+  type UpdateProfileRequest,
+  type UserGoals,
+  type UserProfile,
   type RecalculateMealResponse,
+  type WeekProgress,
+  type XpSummary,
 } from "@foodsense/shared";
 
 import { getApiBaseUrl } from "./env";
@@ -40,6 +61,16 @@ function createAuthHeaders(accessToken?: string, includeJson = false) {
   }
 
   return headers;
+}
+
+function appendPlayerQuery(params: URLSearchParams, date?: string, timeZone?: string) {
+  if (date) {
+    params.set("date", date);
+  }
+
+  if (timeZone) {
+    params.set("timeZone", timeZone);
+  }
 }
 
 export async function analyzeMeal(file: File): Promise<MealAnalysisResponse> {
@@ -208,4 +239,211 @@ export async function getMealsByDate(
   }
 
   return MealsByDateResponseSchema.parse(await response.json());
+}
+
+export async function getProfile(accessToken: string): Promise<UserProfile> {
+  const response = await fetch(`${getApiBaseUrl()}/api/v1/profile`, {
+    headers: createAuthHeaders(accessToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return UserProfileSchema.parse(await response.json());
+}
+
+export async function updateProfile(
+  updates: UpdateProfileRequest,
+  accessToken: string,
+): Promise<UserProfile> {
+  const body = UpdateProfileRequestSchema.parse(updates);
+  const response = await fetch(`${getApiBaseUrl()}/api/v1/profile`, {
+    method: "PATCH",
+    headers: createAuthHeaders(accessToken, true),
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return UserProfileSchema.parse(await response.json());
+}
+
+export async function getGoals(accessToken: string): Promise<UserGoals> {
+  const response = await fetch(`${getApiBaseUrl()}/api/v1/goals`, {
+    headers: createAuthHeaders(accessToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return UserGoalsSchema.parse(await response.json());
+}
+
+export async function updateGoals(
+  updates: UpdateGoalsRequest,
+  accessToken: string,
+): Promise<UserGoals> {
+  const body = UpdateGoalsRequestSchema.parse(updates);
+  const response = await fetch(`${getApiBaseUrl()}/api/v1/goals`, {
+    method: "PATCH",
+    headers: createAuthHeaders(accessToken, true),
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return UserGoalsSchema.parse(await response.json());
+}
+
+export async function getXp(
+  accessToken: string,
+  date?: string,
+  timeZone?: string,
+): Promise<XpSummary> {
+  const params = new URLSearchParams();
+  appendPlayerQuery(params, date, timeZone);
+  const response = await fetch(`${getApiBaseUrl()}/api/v1/xp?${params.toString()}`, {
+    headers: createAuthHeaders(accessToken),
+  });
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return XpSummarySchema.parse(await response.json());
+}
+
+export async function getStreaks(
+  accessToken: string,
+  date?: string,
+  timeZone?: string,
+): Promise<StreakSummary> {
+  const params = new URLSearchParams();
+  appendPlayerQuery(params, date, timeZone);
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/v1/streaks?${params.toString()}`,
+    {
+      headers: createAuthHeaders(accessToken),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return StreakSummarySchema.parse(await response.json());
+}
+
+export async function getDailyQuests(
+  accessToken: string,
+  date?: string,
+  timeZone?: string,
+): Promise<QuestProgress[]> {
+  const params = new URLSearchParams();
+  appendPlayerQuery(params, date, timeZone);
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/v1/quests/daily?${params.toString()}`,
+    {
+      headers: createAuthHeaders(accessToken),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return QuestProgressSchema.array().parse(await response.json());
+}
+
+export async function getWeeklyQuests(
+  accessToken: string,
+  date?: string,
+  timeZone?: string,
+): Promise<QuestProgress[]> {
+  const params = new URLSearchParams();
+  appendPlayerQuery(params, date, timeZone);
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/v1/quests/weekly?${params.toString()}`,
+    {
+      headers: createAuthHeaders(accessToken),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return QuestProgressSchema.array().parse(await response.json());
+}
+
+export async function getTodayProgress(
+  accessToken: string,
+  date?: string,
+  timeZone?: string,
+): Promise<TodayProgress> {
+  const params = new URLSearchParams();
+  appendPlayerQuery(params, date, timeZone);
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/v1/progress/today?${params.toString()}`,
+    {
+      headers: createAuthHeaders(accessToken),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return TodayProgressSchema.parse(await response.json());
+}
+
+export async function getWeekProgress(
+  accessToken: string,
+  date?: string,
+  timeZone?: string,
+): Promise<WeekProgress> {
+  const params = new URLSearchParams();
+  appendPlayerQuery(params, date, timeZone);
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/v1/progress/week?${params.toString()}`,
+    {
+      headers: createAuthHeaders(accessToken),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return WeekProgressSchema.parse(await response.json());
+}
+
+export async function getProgressRange(
+  accessToken: string,
+  period: "weekly" | "monthly",
+  date?: string,
+  timeZone?: string,
+): Promise<ProgressRange> {
+  const params = new URLSearchParams({
+    period,
+  });
+  appendPlayerQuery(params, date, timeZone);
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/v1/progress/range?${params.toString()}`,
+    {
+      headers: createAuthHeaders(accessToken),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(await parseError(response));
+  }
+
+  return ProgressRangeSchema.parse(await response.json());
 }

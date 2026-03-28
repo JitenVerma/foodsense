@@ -44,6 +44,9 @@ export function analysisToSaveMealRequest(input: {
   mealType: MealType;
   eatenAt: string;
   imageUrl?: string | null;
+  isFavorite?: boolean;
+  isLibraryTemplate?: boolean;
+  sourceMealId?: string | null;
 }): SaveMealRequest {
   const ingredients = [
     ...input.analysis.visibleIngredients,
@@ -55,6 +58,9 @@ export function analysisToSaveMealRequest(input: {
     mealType: input.mealType,
     eatenAt: input.eatenAt,
     imageUrl: input.imageUrl ?? null,
+    isFavorite: input.isFavorite ?? false,
+    isLibraryTemplate: input.isLibraryTemplate ?? false,
+    sourceMealId: input.sourceMealId ?? null,
     ingredients,
     assumptions: input.analysis.assumptions,
     warnings: input.analysis.warnings,
@@ -87,12 +93,18 @@ export function analysisToUpdateMealRequest(input: {
   mealType: MealType;
   eatenAt: string;
   imageUrl?: string | null;
+  isFavorite?: boolean;
+  isLibraryTemplate?: boolean;
+  sourceMealId?: string | null;
 }): UpdateMealRequest {
   return {
     title: input.title.trim() || buildTitleFromAnalysis(input.analysis),
     mealType: input.mealType,
     eatenAt: input.eatenAt,
     imageUrl: input.imageUrl ?? null,
+    isFavorite: input.isFavorite,
+    isLibraryTemplate: input.isLibraryTemplate,
+    sourceMealId: input.sourceMealId,
     ingredients: [
       ...input.analysis.visibleIngredients,
       ...input.analysis.inferredIngredients,

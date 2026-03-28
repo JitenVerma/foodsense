@@ -5,12 +5,20 @@ import Link from "next/link";
 interface HUDHeaderProps {
   playerName: string;
   mealCount: number;
+  currentLevel?: number;
+  xpIntoCurrentLevel?: number;
+  xpToNextLevel?: number;
+  loggingStreak?: number;
   onSignOut: () => void;
 }
 
 export function HUDHeader({
   playerName,
   mealCount,
+  currentLevel = 1,
+  xpIntoCurrentLevel = 0,
+  xpToNextLevel = 100,
+  loggingStreak = 0,
   onSignOut,
 }: HUDHeaderProps) {
   const todayLabel = new Intl.DateTimeFormat("en-AU", {
@@ -30,6 +38,18 @@ export function HUDHeader({
             <Link className="arcade-button-secondary !min-h-0 !px-3 !py-2" href="/dashboard">
               Dashboard
             </Link>
+            <Link className="arcade-button-secondary !min-h-0 !px-3 !py-2" href="/profile">
+              Profile
+            </Link>
+            <Link className="arcade-button-secondary !min-h-0 !px-3 !py-2" href="/progress">
+              Progress
+            </Link>
+            <Link className="arcade-button-secondary !min-h-0 !px-3 !py-2" href="/quests">
+              Quests
+            </Link>
+            <Link className="arcade-button-secondary !min-h-0 !px-3 !py-2" href="/library">
+              Library
+            </Link>
             <Link className="arcade-button-secondary !min-h-0 !px-3 !py-2" href="/calendar">
               Calendar
             </Link>
@@ -45,9 +65,15 @@ export function HUDHeader({
             <p className="mt-2 text-sm text-[var(--color-text-primary)]">{todayLabel}</p>
           </div>
           <div className="arcade-panel rounded-md px-4 py-3">
-            <p className="arcade-label text-[var(--color-text-muted)]">Quest Log</p>
+            <p className="arcade-label text-[var(--color-text-muted)]">Level</p>
             <p className="mt-2 text-sm text-[var(--color-text-primary)]">
-              {mealCount} meal{mealCount === 1 ? "" : "s"} logged
+              Lv {currentLevel} • {xpIntoCurrentLevel}/{xpIntoCurrentLevel + xpToNextLevel} XP
+            </p>
+          </div>
+          <div className="arcade-panel rounded-md px-4 py-3">
+            <p className="arcade-label text-[var(--color-text-muted)]">Streak</p>
+            <p className="mt-2 text-sm text-[var(--color-text-primary)]">
+              {loggingStreak} day{loggingStreak === 1 ? "" : "s"} • {mealCount} meal{mealCount === 1 ? "" : "s"}
             </p>
           </div>
           <div className="arcade-panel rounded-md px-4 py-3">

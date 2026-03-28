@@ -10,6 +10,10 @@ interface MealRow {
   meal_type: SavedMeal["mealType"];
   eaten_at: string;
   image_url: string | null;
+  is_favorite: boolean | null;
+  is_library_template: boolean | null;
+  source_meal_id: string | null;
+  last_reused_at: string | null;
   total_protein: number | null;
   total_carbs: number | null;
   total_fat: number | null;
@@ -40,6 +44,9 @@ export interface PersistedMealPayload {
   mealType: SavedMeal["mealType"];
   eatenAt: string;
   imageUrl?: string | null;
+  isFavorite?: boolean;
+  isLibraryTemplate?: boolean;
+  sourceMealId?: string | null;
   ingredients: Ingredient[];
   assumptions: string[];
   warnings: string[];
@@ -118,6 +125,10 @@ function mapMealRow(row: MealRow): SavedMeal {
     mealType: row.meal_type,
     eatenAt: row.eaten_at,
     imageUrl: row.image_url,
+    isFavorite: Boolean(row.is_favorite),
+    isLibraryTemplate: Boolean(row.is_library_template),
+    sourceMealId: row.source_meal_id,
+    lastReusedAt: row.last_reused_at,
     ingredients: (row.meal_ingredients ?? []).map(mapIngredientRow),
     macroTotals: {
       protein_g: normalizeNumber(row.total_protein),
@@ -181,6 +192,9 @@ export function createMealsRepository(): MealsRepository {
           meal_type: payload.mealType,
           eaten_at: payload.eatenAt,
           image_url: payload.imageUrl ?? null,
+          is_favorite: payload.isFavorite ?? false,
+          is_library_template: payload.isLibraryTemplate ?? false,
+          source_meal_id: payload.sourceMealId ?? null,
           total_protein: payload.macroTotals.protein_g,
           total_carbs: payload.macroTotals.carbs_g,
           total_fat: payload.macroTotals.fat_g,
@@ -233,6 +247,9 @@ export function createMealsRepository(): MealsRepository {
           meal_type: payload.mealType,
           eaten_at: payload.eatenAt,
           image_url: payload.imageUrl ?? null,
+          is_favorite: payload.isFavorite ?? false,
+          is_library_template: payload.isLibraryTemplate ?? false,
+          source_meal_id: payload.sourceMealId ?? null,
           total_protein: payload.macroTotals.protein_g,
           total_carbs: payload.macroTotals.carbs_g,
           total_fat: payload.macroTotals.fat_g,

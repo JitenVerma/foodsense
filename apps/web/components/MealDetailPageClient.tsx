@@ -26,6 +26,8 @@ export function MealDetailPageClient({ mealId }: { mealId: string }) {
   const [title, setTitle] = useState("Untitled meal");
   const [mealType, setMealType] = useState<MealType>("lunch");
   const [eatenAt, setEatenAt] = useState(toDateTimeLocalValue(new Date()));
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isLibraryTemplate, setIsLibraryTemplate] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +43,8 @@ export function MealDetailPageClient({ mealId }: { mealId: string }) {
         setTitle(savedMeal.title);
         setMealType(savedMeal.mealType);
         setEatenAt(toDateTimeLocalValue(new Date(savedMeal.eatenAt)));
+        setIsFavorite(savedMeal.isFavorite);
+        setIsLibraryTemplate(savedMeal.isLibraryTemplate);
         setError(null);
       })
       .catch((nextError) => {
@@ -73,6 +77,9 @@ export function MealDetailPageClient({ mealId }: { mealId: string }) {
           mealType,
           eatenAt: fromDateTimeLocalValue(eatenAt),
           imageUrl: meal?.imageUrl ?? null,
+          isFavorite,
+          isLibraryTemplate,
+          sourceMealId: meal?.sourceMealId ?? null,
         }),
         session.access_token,
       );
@@ -224,6 +231,25 @@ export function MealDetailPageClient({ mealId }: { mealId: string }) {
               onChange={(event) => setEatenAt(event.target.value)}
               className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400"
             />
+          </label>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-6 text-sm text-slate-700">
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={isFavorite}
+              onChange={(event) => setIsFavorite(event.target.checked)}
+            />
+            Favorite meal
+          </label>
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={isLibraryTemplate}
+              onChange={(event) => setIsLibraryTemplate(event.target.checked)}
+            />
+            Save as reusable template
           </label>
         </div>
       </section>

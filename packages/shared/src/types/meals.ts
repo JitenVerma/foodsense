@@ -51,6 +51,10 @@ export interface SavedMeal {
   mealType: MealType;
   eatenAt: string;
   imageUrl: string | null;
+  isFavorite: boolean;
+  isLibraryTemplate: boolean;
+  sourceMealId: string | null;
+  lastReusedAt: string | null;
   ingredients: Ingredient[];
   macroTotals: MacroTotals;
   assumptions: string[];
@@ -64,6 +68,9 @@ export interface SaveMealRequest {
   mealType: MealType;
   eatenAt: string;
   imageUrl?: string | null;
+  isFavorite?: boolean;
+  isLibraryTemplate?: boolean;
+  sourceMealId?: string | null;
   ingredients: Ingredient[];
   assumptions: string[];
   warnings: string[];
@@ -74,6 +81,9 @@ export interface UpdateMealRequest {
   mealType?: MealType;
   eatenAt?: string;
   imageUrl?: string | null;
+  isFavorite?: boolean;
+  isLibraryTemplate?: boolean;
+  sourceMealId?: string | null;
   ingredients?: Ingredient[];
   assumptions?: string[];
   warnings?: string[];

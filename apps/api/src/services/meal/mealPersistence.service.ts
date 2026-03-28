@@ -152,6 +152,9 @@ export function createMealPersistenceService(
         userId,
         {
           ...meal,
+          isFavorite: meal.isFavorite,
+          isLibraryTemplate: meal.isLibraryTemplate,
+          sourceMealId: meal.sourceMealId,
           macroTotals: computeMacroTotals(macroCalculatorService, meal.ingredients),
         },
       );
@@ -200,6 +203,18 @@ export function createMealPersistenceService(
           eatenAt: updates.eatenAt ?? existingMeal.eatenAt,
           imageUrl:
             updates.imageUrl === undefined ? existingMeal.imageUrl : updates.imageUrl,
+          isFavorite:
+            updates.isFavorite === undefined
+              ? existingMeal.isFavorite
+              : updates.isFavorite,
+          isLibraryTemplate:
+            updates.isLibraryTemplate === undefined
+              ? existingMeal.isLibraryTemplate
+              : updates.isLibraryTemplate,
+          sourceMealId:
+            updates.sourceMealId === undefined
+              ? existingMeal.sourceMealId
+              : updates.sourceMealId,
           assumptions: updates.assumptions ?? existingMeal.assumptions,
           warnings: updates.warnings ?? existingMeal.warnings,
           ingredients,

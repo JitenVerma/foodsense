@@ -61,6 +61,10 @@ describe("MealAnalysisResponseSchema", () => {
       mealType: "lunch",
       eatenAt: "2026-03-26T12:30:00+00:00",
       imageUrl: null,
+      isFavorite: false,
+      isLibraryTemplate: true,
+      sourceMealId: null,
+      lastReusedAt: null,
       ingredients: [],
       macroTotals: {
         protein_g: 40,

@@ -6,8 +6,10 @@ import { getEnv, type AppEnv } from "../config/env.js";
 import { registerPlugins } from "./plugins.js";
 import { registerHealthRoutes } from "../routes/health.routes.js";
 import { registerMealRoutes } from "../routes/meals.routes.js";
+import { registerPlayerRoutes } from "../routes/player.routes.js";
 import { createMealsRepository } from "../repositories/meals.repository.js";
 import { createNutritionRepository } from "../repositories/nutrition.repository.js";
+import { createPlayerRepository } from "../repositories/player.repository.js";
 import { createNutritionLookupService } from "../services/nutrition/nutritionLookup.service.js";
 import { createMacroCalculatorService } from "../services/nutrition/macroCalculator.service.js";
 import {
@@ -27,6 +29,7 @@ import { createMealAnalysisOrchestratorService } from "../services/meal/mealAnal
 import { createMealRecalculationService } from "../services/meal/mealRecalculation.service.js";
 import { createMealPersistenceService } from "../services/meal/mealPersistence.service.js";
 import { createRequestAuthService } from "../services/auth/requestAuth.service.js";
+import { createPlayerService } from "../services/player/player.service.js";
 import { AppError } from "../lib/errors.js";
 import { createLogger } from "../lib/logger.js";
 
@@ -62,6 +65,10 @@ export async function buildServer(
     mealPersistenceService: services.mealPersistenceService,
     requestAuthService: services.requestAuthService,
     maxUploadSizeBytes: env.maxUploadSizeBytes,
+  });
+  await registerPlayerRoutes(server, {
+    playerService: services.playerService,
+    requestAuthService: services.requestAuthService,
   });
 
   server.setErrorHandler((error, request, reply) => {
@@ -110,6 +117,7 @@ function createServices(
   const appLogger = createLogger(server.log);
   const nutritionRepository = createNutritionRepository();
   const mealsRepository = createMealsRepository();
+  const playerRepository = createPlayerRepository();
   const nutritionLookupService = createNutritionLookupService({
     repository: nutritionRepository,
     usdaApiKey: env.USDA_API_KEY,
@@ -210,6 +218,12 @@ function createServices(
     requestAuthService,
     macroCalculatorService,
   });
+  const playerService = createPlayerService({
+    playerRepository,
+    mealsRepository,
+    requestAuthService,
+    macroCalculatorService,
+  });
 
   if (!env.SUPABASE_URL || !env.SUPABASE_PUBLISHABLE_KEY) {
     appLogger.warn("Supabase persistence is not configured.", {
@@ -227,6 +241,7 @@ function createServices(
     mealAnalysisOrchestrator,
     mealRecalculationService,
     mealPersistenceService,
+    playerService,
     requestAuthService,
     analyzerMode,
   };

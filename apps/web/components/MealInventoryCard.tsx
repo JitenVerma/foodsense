@@ -25,6 +25,18 @@ export function MealInventoryCard({ meal }: { meal: SavedMeal }) {
           <p className="arcade-label text-[var(--color-brand-highlight)]">
             {mealTypeLabels[meal.mealType]}
           </p>
+          <div className="mt-2 flex flex-wrap gap-2 text-[0.62rem] uppercase tracking-[0.14em] text-[var(--color-text-muted)]">
+            {meal.isFavorite ? (
+              <span className="rounded-md border border-[var(--color-brand-accent)] px-2 py-1 text-[var(--color-brand-accent)]">
+                Favorite
+              </span>
+            ) : null}
+            {meal.isLibraryTemplate ? (
+              <span className="rounded-md border border-[var(--color-brand-secondary)] px-2 py-1 text-[var(--color-brand-secondary)]">
+                Template
+              </span>
+            ) : null}
+          </div>
           <h3 className="mt-3 text-lg font-semibold text-[var(--color-text-primary)]">
             {meal.title}
           </h3>
